@@ -30,7 +30,7 @@ export interface Text2ImgParams {
 
 // 图生图请求参数
 export interface Img2ImgParams {
-	templateUUID: string; // 注意：图生图接口使用的是UUID而不是Uuid
+	templateUuid: string; // 经测试验证：API使用templateUuid（驼峰式）
 	generateParams: GenerateParams & {
 		sourceImage: string; // 图生图必需源图片
 	};

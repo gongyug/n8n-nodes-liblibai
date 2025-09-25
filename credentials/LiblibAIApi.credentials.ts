@@ -50,7 +50,7 @@ export class LiblibAIApi implements ICredentialType {
 			description: `
 				<h4>获取API密钥步骤：</h4>
 				<ol>
-					<li>访问 <a href="https://www.liblibai.com" target="_blank">LiblibAI官网</a> 注册登录</li>
+					<li>访问 <a href="https://www.liblib.art/apis" target="_blank">LiblibAI官网</a> 注册登录</li>
 					<li>前往开放平台申请API试用积分或购买API积分</li>
 					<li>获取 Access Key 和 Secret Key</li>
 					<li>将密钥填入上方配置项</li>

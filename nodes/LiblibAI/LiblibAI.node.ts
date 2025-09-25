@@ -209,90 +209,108 @@ export class LiblibAI implements INodeType {
 				required: true,
 			},
 
-			// ===== 高级参数 =====
+			// ===== 高级设置 =====
 			{
 				displayName: '高级设置',
-				name: 'advancedSettings',
-				type: 'collection' as NodePropertyTypes,
-				placeholder: '添加高级设置',
-				default: {},
+				name: 'enableAdvancedSettings',
+				type: 'boolean' as NodePropertyTypes,
+				default: false,
+				description: '是否开启高级参数设置',
 				displayOptions: {
 					show: {
 						operation: [OperationType.TEXT_TO_IMAGE, OperationType.IMAGE_TO_IMAGE],
 					},
 				},
+			},
+
+			{
+				displayName: '采样步数',
+				name: 'steps',
+				type: 'number' as NodePropertyTypes,
+				default: 30,
+				description: '生图的采样步数，建议30，数值越高质量越好但耗时更长',
+				typeOptions: {
+					minValue: 10,
+					maxValue: 100,
+				},
+				displayOptions: {
+					show: {
+						operation: [OperationType.TEXT_TO_IMAGE, OperationType.IMAGE_TO_IMAGE],
+						enableAdvancedSettings: [true],
+					},
+				},
+			},
+
+			{
+				displayName: '启用ControlNet',
+				name: 'enableControlNet',
+				type: 'boolean' as NodePropertyTypes,
+				default: false,
+				description: '是否启用构图控制功能',
+				displayOptions: {
+					show: {
+						operation: [OperationType.TEXT_TO_IMAGE, OperationType.IMAGE_TO_IMAGE],
+						enableAdvancedSettings: [true],
+					},
+				},
+			},
+
+			{
+				displayName: 'ControlNet类型',
+				name: 'controlType',
+				type: 'options' as NodePropertyTypes,
 				options: [
 					{
-						displayName: '采样步数',
-						name: 'steps',
-						type: 'number' as NodePropertyTypes,
-						default: 30,
-						description: '生图的采样步数，建议30，数值越高质量越好但耗时更长',
-						typeOptions: {
-							minValue: 10,
-							maxValue: 100,
-						},
+						name: '线稿轮廓 (Line)',
+						value: 'line',
+						description: '保持图片的线条结构',
 					},
 					{
-						displayName: '启用ControlNet',
-						name: 'enableControlNet',
-						type: 'boolean' as NodePropertyTypes,
-						default: false,
-						description: '是否启用构图控制功能',
+						name: '空间关系 (Depth)',
+						value: 'depth',
+						description: '保持图片的深度和空间布局',
 					},
 					{
-						displayName: 'ControlNet类型',
-						name: 'controlType',
-						type: 'options' as NodePropertyTypes,
-						options: [
-							{
-								name: '线稿轮廓 (Line)',
-								value: 'line',
-								description: '保持图片的线条结构',
-							},
-							{
-								name: '空间关系 (Depth)',
-								value: 'depth',
-								description: '保持图片的深度和空间布局',
-							},
-							{
-								name: '人物姿态 (Pose)',
-								value: 'pose',
-								description: '保持人物的姿势和动作',
-							},
-							{
-								name: '风格迁移 (IPAdapter)',
-								value: 'IPAdapter',
-								description: '迁移参考图片的风格',
-							},
-							{
-								name: '主体参考 (Subject)',
-								value: 'subject',
-								description: '参考图片中的主体对象',
-							},
-						],
-						default: 'depth',
-						displayOptions: {
-							show: {
-								enableControlNet: [true],
-							},
-						},
+						name: '人物姿态 (Pose)',
+						value: 'pose',
+						description: '保持人物的姿势和动作',
 					},
 					{
-						displayName: 'ControlNet参考图',
-						name: 'controlImage',
-						type: 'string' as NodePropertyTypes,
-						default: '',
-						placeholder: 'https://example.com/control-image.jpg',
-						description: 'ControlNet使用的参考图片URL',
-						displayOptions: {
-							show: {
-								enableControlNet: [true],
-							},
-						},
-						required: true,
+						name: '风格迁移 (IPAdapter)',
+						value: 'IPAdapter',
+						description: '迁移参考图片的风格',
+					},
+					{
+						name: '主体参考 (Subject)',
+						value: 'subject',
+						description: '参考图片中的主体对象',
 					},
 				],
+				default: 'depth',
+				displayOptions: {
+					show: {
+						operation: [OperationType.TEXT_TO_IMAGE, OperationType.IMAGE_TO_IMAGE],
+						enableAdvancedSettings: [true],
+						enableControlNet: [true],
+					},
+				},
+			},
+
+			{
+				displayName: 'ControlNet参考图',
+				name: 'controlImage',
+				type: 'string' as NodePropertyTypes,
+				default: '',
+				placeholder: 'https://example.com/control-image.jpg',
+				description: 'ControlNet使用的参考图片URL',
+				displayOptions: {
+					show: {
+						operation: [OperationType.TEXT_TO_IMAGE, OperationType.IMAGE_TO_IMAGE],
+						enableAdvancedSettings: [true],
+						enableControlNet: [true],
+					},
+				},
+				required: true,
 			},
 
 			// ===== 状态查询参数 =====
@@ -313,57 +331,52 @@ export class LiblibAI implements INodeType {
 
 			// ===== 异步执行设置 =====
 			{
-				displayName: '异步执行设置',
-				name: 'asyncSettings',
-				type: 'collection' as NodePropertyTypes,
-				placeholder: '添加异步执行设置',
-				default: {},
+				displayName: '等待任务完成',
+				name: 'waitForCompletion',
+				type: 'boolean' as NodePropertyTypes,
+				default: true,
+				description: '是否等待生图任务完成后再返回结果。关闭时只返回任务UUID',
 				displayOptions: {
 					show: {
 						operation: [OperationType.TEXT_TO_IMAGE, OperationType.IMAGE_TO_IMAGE],
 					},
 				},
-				options: [
-					{
-						displayName: '等待任务完成',
-						name: 'waitForCompletion',
-						type: 'boolean' as NodePropertyTypes,
-						default: true,
-						description: '是否等待生图任务完成后再返回结果。关闭时只返回任务UUID',
+			},
+
+			{
+				displayName: '最大等待时间（秒）',
+				name: 'maxWaitTime',
+				type: 'number' as NodePropertyTypes,
+				default: 300,
+				description: '等待任务完成的最大时间，超时后抛出错误',
+				typeOptions: {
+					minValue: 30,
+					maxValue: 1800, // 30分钟
+				},
+				displayOptions: {
+					show: {
+						operation: [OperationType.TEXT_TO_IMAGE, OperationType.IMAGE_TO_IMAGE],
+						waitForCompletion: [true],
 					},
-					{
-						displayName: '最大等待时间（秒）',
-						name: 'maxWaitTime',
-						type: 'number' as NodePropertyTypes,
-						default: 300,
-						description: '等待任务完成的最大时间，超时后抛出错误',
-						typeOptions: {
-							minValue: 30,
-							maxValue: 1800, // 30分钟
-						},
-						displayOptions: {
-							show: {
-								waitForCompletion: [true],
-							},
-						},
+				},
+			},
+
+			{
+				displayName: '轮询间隔（秒）',
+				name: 'pollInterval',
+				type: 'number' as NodePropertyTypes,
+				default: 5,
+				description: '检查任务状态的间隔时间',
+				typeOptions: {
+					minValue: 1,
+					maxValue: 60,
+				},
+				displayOptions: {
+					show: {
+						operation: [OperationType.TEXT_TO_IMAGE, OperationType.IMAGE_TO_IMAGE],
+						waitForCompletion: [true],
 					},
-					{
-						displayName: '轮询间隔（秒）',
-						name: 'pollInterval',
-						type: 'number' as NodePropertyTypes,
-						default: 5,
-						description: '检查任务状态的间隔时间',
-						typeOptions: {
-							minValue: 1,
-							maxValue: 60,
-						},
-						displayOptions: {
-							show: {
-								waitForCompletion: [true],
-							},
-						},
-					},
-				],
+				},
 			},
 		],
 	};
@@ -489,7 +502,7 @@ export class LiblibAI implements INodeType {
 		};
 
 		const img2imgParams = {
-			templateUUID: TemplateUuid.STAR3_IMG2IMG, // 注意：图生图使用UUID而非Uuid
+			templateUuid: TemplateUuid.STAR3_IMG2IMG, // 经测试验证：使用templateUuid
 			generateParams,
 		};
 
@@ -561,8 +574,7 @@ export class LiblibAI implements INodeType {
 		itemIndex: number,
 		operation: string,
 	): Promise<INodeExecutionData> {
-		const asyncSettings = context.getNodeParameter('asyncSettings', itemIndex, {}) as any;
-		const waitForCompletion = asyncSettings.waitForCompletion !== false; // 默认为true
+		const waitForCompletion = context.getNodeParameter('waitForCompletion', itemIndex, true) as boolean;
 
 		if (!waitForCompletion) {
 			// 不等待完成，直接返回任务UUID
@@ -580,8 +592,8 @@ export class LiblibAI implements INodeType {
 		}
 
 		// 等待任务完成
-		const maxWaitTime = asyncSettings.maxWaitTime || 300;
-		const pollInterval = asyncSettings.pollInterval || 5;
+		const maxWaitTime = context.getNodeParameter('maxWaitTime', itemIndex, 300) as number;
+		const pollInterval = context.getNodeParameter('pollInterval', itemIndex, 5) as number;
 
 		const poller = new TaskPoller(client, maxWaitTime, pollInterval);
 
@@ -616,7 +628,6 @@ export class LiblibAI implements INodeType {
 		const prompt = context.getNodeParameter('prompt', itemIndex) as string;
 		const imgCount = context.getNodeParameter('imgCount', itemIndex, 1) as number;
 		const sizeMode = context.getNodeParameter('sizeMode', itemIndex, 'aspectRatio') as string;
-		const advancedSettings = context.getNodeParameter('advancedSettings', itemIndex, {}) as any;
 
 		const params: GenerateParams = {
 			prompt: prompt.trim(),
@@ -634,16 +645,24 @@ export class LiblibAI implements INodeType {
 		}
 
 		// 高级设置
-		if (advancedSettings.steps) {
-			params.steps = advancedSettings.steps;
-		}
+		const enableAdvancedSettings = context.getNodeParameter('enableAdvancedSettings', itemIndex, false) as boolean;
+		if (enableAdvancedSettings) {
+			const steps = context.getNodeParameter('steps', itemIndex, 30) as number;
+			if (steps !== 30) {
+				params.steps = steps;
+			}
 
-		// ControlNet设置
-		if (advancedSettings.enableControlNet && advancedSettings.controlImage) {
-			params.controlnet = {
-				controlType: advancedSettings.controlType || 'depth',
-				controlImage: advancedSettings.controlImage,
-			};
+			// ControlNet设置
+			const enableControlNet = context.getNodeParameter('enableControlNet', itemIndex, false) as boolean;
+			if (enableControlNet) {
+				const controlImage = context.getNodeParameter('controlImage', itemIndex, '') as string;
+				if (controlImage) {
+					params.controlnet = {
+						controlType: context.getNodeParameter('controlType', itemIndex, 'depth') as any,
+						controlImage,
+					};
+				}
+			}
 		}
 
 		return params;

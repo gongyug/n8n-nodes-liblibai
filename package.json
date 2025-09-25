@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-liblibai",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "n8n 社区节点，用于与 LiblibAI 星流 Star-3 Alpha AI 图片生成服务集成",
 	"keywords": [
 		"n8n-community-node-package",
