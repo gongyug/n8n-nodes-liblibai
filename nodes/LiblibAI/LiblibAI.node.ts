@@ -592,8 +592,8 @@ export class LiblibAI implements INodeType {
 		}
 
 		// 等待任务完成
-		const maxWaitTime = context.getNodeParameter('maxWaitTime', itemIndex, 300) as number;
-		const pollInterval = context.getNodeParameter('pollInterval', itemIndex, 5) as number;
+		const maxWaitTime = LiblibAI.safeParseNumber(context, 'maxWaitTime', itemIndex, 300);
+		const pollInterval = LiblibAI.safeParseNumber(context, 'pollInterval', itemIndex, 5);
 
 		const poller = new TaskPoller(client, maxWaitTime, pollInterval);
 
@@ -626,7 +626,7 @@ export class LiblibAI implements INodeType {
 	 */
 	private static buildGenerateParams(context: IExecuteFunctions, itemIndex: number): GenerateParams {
 		const prompt = context.getNodeParameter('prompt', itemIndex) as string;
-		const imgCount = context.getNodeParameter('imgCount', itemIndex, 1) as number;
+		const imgCount = LiblibAI.safeParseNumber(context, 'imgCount', itemIndex, 1);
 		const sizeMode = context.getNodeParameter('sizeMode', itemIndex, 'aspectRatio') as string;
 
 		const params: GenerateParams = {
@@ -639,15 +639,15 @@ export class LiblibAI implements INodeType {
 			params.aspectRatio = context.getNodeParameter('aspectRatio', itemIndex, 'portrait') as any;
 		} else {
 			params.imageSize = {
-				width: context.getNodeParameter('imageWidth', itemIndex, 768) as number,
-				height: context.getNodeParameter('imageHeight', itemIndex, 1024) as number,
+				width: LiblibAI.safeParseNumber(context, 'imageWidth', itemIndex, 768),
+				height: LiblibAI.safeParseNumber(context, 'imageHeight', itemIndex, 1024),
 			};
 		}
 
 		// 高级设置
 		const enableAdvancedSettings = context.getNodeParameter('enableAdvancedSettings', itemIndex, false) as boolean;
 		if (enableAdvancedSettings) {
-			const steps = context.getNodeParameter('steps', itemIndex, 30) as number;
+			const steps = LiblibAI.safeParseNumber(context, 'steps', itemIndex, 30);
 			if (steps !== 30) {
 				params.steps = steps;
 			}
@@ -717,8 +717,8 @@ export class LiblibAI implements INodeType {
 		// 验证自定义尺寸
 		const sizeMode = context.getNodeParameter('sizeMode', itemIndex) as string;
 		if (sizeMode === 'custom') {
-			const width = context.getNodeParameter('imageWidth', itemIndex) as number;
-			const height = context.getNodeParameter('imageHeight', itemIndex) as number;
+			const width = LiblibAI.safeParseNumber(context, 'imageWidth', itemIndex, 768);
+			const height = LiblibAI.safeParseNumber(context, 'imageHeight', itemIndex, 1024);
 
 			if (width < 512 || width > 2048 || height < 512 || height > 2048) {
 				throw new NodeOperationError(context.getNode(), '图片尺寸必须在512-2048像素范围内', {
@@ -756,5 +756,33 @@ export class LiblibAI implements INodeType {
 		} catch {
 			return false;
 		}
+	}
+
+	/**
+	 * 安全转换参数为数字，支持字符串输入
+	 */
+	private static safeParseNumber(context: IExecuteFunctions, paramName: string, itemIndex: number, defaultValue: number): number {
+		const value = context.getNodeParameter(paramName, itemIndex, defaultValue);
+
+		// 如果已经是数字，直接返回
+		if (typeof value === 'number') {
+			return value;
+		}
+
+		// 如果是字符串，尝试转换为数字
+		if (typeof value === 'string') {
+			const trimmed = value.trim();
+			if (trimmed === '') {
+				return defaultValue;
+			}
+
+			const parsed = Number(trimmed);
+			if (!isNaN(parsed) && isFinite(parsed)) {
+				return parsed;
+			}
+		}
+
+		// 转换失败或其他类型，返回默认值
+		return defaultValue;
 	}
 }

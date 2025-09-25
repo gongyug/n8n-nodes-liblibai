@@ -12,17 +12,17 @@
 		"img2img"
 	],
 	"license": "MIT",
-	"homepage": "https://github.com/your-username/n8n-nodes-liblibai#readme",
+	"homepage": "https://github.com/gongyug/n8n-nodes-liblibai#readme",
 	"author": {
-		"name": "Your Name",
-		"email": "your.email@example.com"
+		"name": "junai",
+		"email": "gongyuge123@gmail.com"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/your-username/n8n-nodes-liblibai.git"
+		"url": "https://github.com/gongyug/n8n-nodes-liblibai.git"
 	},
 	"bugs": {
-		"url": "https://github.com/your-username/n8n-nodes-liblibai/issues"
+		"url": "https://github.com/gongyug/n8n-nodes-liblibai/issues"
 	},
 	"main": "index.js",
 	"scripts": {

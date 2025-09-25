@@ -10,7 +10,6 @@
 - 🔍 **状态查询**: 实时查询生图任务执行状态
 - ⏱️ **异步处理**: 智能轮询机制，支持长时间生图任务
 - 🔐 **安全认证**: 完整的 HMAC-SHA1 签名认证
-- 🎛️ **优化界面**: 简洁的参数设置，支持高级选项开关控制
 
 ## 安装方法
 
@@ -29,24 +28,6 @@
 npm install n8n-nodes-liblibai
 ```
 
-### 方法三：开发模式安装
-
-```bash
-# 克隆项目
-git clone https://github.com/your-username/n8n-nodes-liblibai.git
-cd n8n-nodes-liblibai
-
-# 安装依赖
-npm install
-
-# 构建项目
-npm run build
-
-# 链接到 n8n（开发模式）
-npm link
-cd /path/to/your/n8n
-npm link n8n-nodes-liblibai
-```
 
 ## 配置指南
 
@@ -86,7 +67,7 @@ HTTP Request → LiblibAI (图生图) → 保存到云存储
 - 操作类型: 图生图
 - 提示词: "transform into anime style, colorful"
 - 参考图片URL: 从上一步获取的图片链接
-- 高级设置: 开启 → 启用ControlNet → 类型选择"风格迁移"
+- ControlNet: 启用，类型选择"风格迁移"
 
 ### 批量处理工作流
 
@@ -113,14 +94,6 @@ HTTP Request → LiblibAI (图生图) → 保存到云存储
 
 - **自定义尺寸**: 宽度和高度范围 512-2048 像素
 
-### 高级设置
-
-**高级设置开关**: 控制是否显示高级参数
-- **采样步数**: 生图质量控制 (10-100，推荐30)
-- **启用ControlNet**: 开启构图控制功能
-  - **ControlNet类型**: 控制类型选择
-  - **ControlNet参考图**: 参考图片URL
-
 ### ControlNet 功能
 
 | 类型 | 功能 | 适用场景 |
@@ -134,8 +107,8 @@ HTTP Request → LiblibAI (图生图) → 保存到云存储
 ### 异步执行设置
 
 - **等待任务完成**: 是否等待生图完成后返回结果
-- **最大等待时间**: 30 秒 - 30 分钟 (当等待完成时显示)
-- **轮询间隔**: 检查任务状态的频率 (当等待完成时显示)
+- **最大等待时间**: 30 秒 - 30 分钟
+- **轮询间隔**: 检查任务状态的频率
 
 ## 错误处理
 
@@ -148,7 +121,6 @@ HTTP Request → LiblibAI (图生图) → 保存到云存储
 | "图片URL格式不正确" | 参考图片链接无效 | 使用有效的图片 URL |
 | "任务轮询超时" | 生图时间过长 | 增加最大等待时间 |
 | "积分不足" | API 积分用完 | 购买更多 API 积分 |
-| "当前进行中任务数量已达到并发任务上限" | API并发限制 | 等待当前任务完成后重试 |
 
 ## 最佳实践
 
@@ -217,13 +189,6 @@ n8n-nodes-liblibai/
 
 ## 版本历史
 
-- **v1.0.1**: 界面优化更新
-  - 优化节点参数界面，简化配置流程
-  - 修复图生图API参数格式问题
-  - 添加高级设置开关控制
-  - 改进异步执行参数显示逻辑
-  - 增加测试用例和调试工具
-
 - **v1.0.0**: 初始版本
   - 支持文生图和图生图功能
   - 完整的 ControlNet 支持
@@ -245,9 +210,8 @@ n8n-nodes-liblibai/
 
 ## 支持
 
-- 📧 邮箱: your.email@example.com
-- 🐛 Bug 报告: [GitHub Issues](https://github.com/your-username/n8n-nodes-liblibai/issues)
-- 💬 讨论: [GitHub Discussions](https://github.com/your-username/n8n-nodes-liblibai/discussions)
+- 📧 邮箱: gauneng@163.com
+- 🐛 Bug 报告: [GitHub Issues](https://github.com/gongyug/n8n-nodes-liblibai/issues)
 
 ---
 
